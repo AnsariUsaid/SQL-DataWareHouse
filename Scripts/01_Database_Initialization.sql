@@ -27,15 +27,15 @@ WARNINGS AND PREREQUISITES:
 USE master;
 GO
 
--- Create the Data Warehouse database (fixed typo from 'DataWareHous')
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'DataWarehouse')
+-- Create the Data Warehouse database (keeping original name as specified)
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'DataWareHous')
 BEGIN
-    CREATE DATABASE DataWarehouse;
+    CREATE DATABASE DataWareHous;
 END
 GO
 
 -- Switch to the newly created database
-USE DataWarehouse;
+USE DataWareHous;
 GO
 
 -- Create Bronze Schema (Raw Data Layer)
