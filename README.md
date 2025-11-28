@@ -62,8 +62,19 @@ The data flows left to right through the architecture:
 
 ```
 SQL-DataWareHouse-Project/
-├── Scripts/           # SQL scripts for database objects
-├── Datasets/          # Source CSV files and sample data
+├── Scripts/
+│   ├── 01_Database_Initialization.sql      # Creates database and schemas
+│   ├── 02_Bronze_Layer_Tables.sql          # Creates all Bronze layer tables
+│   └── 03_Bronze_Layer_Data_Load.sql       # Loads CSV data into Bronze tables
+├── Datasets/
+│   ├── source_crm/                         # CRM system CSV files
+│   │   ├── cust_info.csv                   # Customer information
+│   │   ├── prd_info.csv                    # Product information
+│   │   └── sales_details.csv               # Sales transaction details
+│   └── source_erp/                         # ERP system CSV files
+│       ├── CUST_AZ12.csv                   # Customer demographics
+│       ├── LOC_A101.csv                    # Customer location data
+│       └── PX_CAT_G1V2.csv                 # Product categories
 ├── Docs/              # Documentation and architecture diagrams
 ├── Tests/             # Test scripts and validation queries
 └── README.md          # This file
@@ -72,9 +83,9 @@ SQL-DataWareHouse-Project/
 ## Getting Started
 
 ### Prerequisites
-- SQL Server 2019 or later
+- SQL Server 2019 or later (Docker container recommended)
 - SQL Server Management Studio (SSMS) or Azure Data Studio
-- Appropriate database creation permissions
+- Docker (if using containerized SQL Server)
 
 ### Installation Steps
 
@@ -84,25 +95,32 @@ SQL-DataWareHouse-Project/
    cd SQL-DataWareHouse
    ```
 
-2. **Initialize the database**
-   - Open `Scripts/01_Database_Initialization.sql` in SSMS
-   - Review and execute the script to create the database and schemas
+2. **Setup SQL Server (Docker recommended)**
+   ```bash
+   docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourPassword123" \
+      -p 1433:1433 --name sqlserver \
+      -d mcr.microsoft.com/mssql/server:2022-latest
+   ```
 
-3. **Load source data**
-   - Place your CSV files in the `Datasets/` directory
-   - Execute data loading scripts (to be developed)
+3. **Initialize the database**
+   - Execute `Scripts/01_Database_Initialization.sql`
+   - Creates database 'DataWareHous' and Bronze, Silver, Gold schemas
 
 4. **Create Bronze layer tables**
-   - Execute Bronze layer table creation scripts
-   - Load raw data from CSV sources
+   - Execute `Scripts/02_Bronze_Layer_Tables.sql`
+   - Creates 6 tables for CRM and ERP source systems
 
-5. **Build Silver layer transformations**
-   - Execute Silver layer table creation scripts
-   - Implement data cleansing and standardization logic
-
-6. **Develop Gold layer views**
-   - Create analytical views with business logic
-   - Implement star schema and aggregated tables
+5. **Load data into Bronze layer**
+   - Copy CSV files to Docker container:
+     ```bash
+     docker cp Datasets/source_crm/cust_info.csv sqlserver:/var/opt/mssql/data/
+     docker cp Datasets/source_crm/prd_info.csv sqlserver:/var/opt/mssql/data/
+     docker cp Datasets/source_crm/sales_details.csv sqlserver:/var/opt/mssql/data/
+     docker cp Datasets/source_erp/CUST_AZ12.csv sqlserver:/var/opt/mssql/data/
+     docker cp Datasets/source_erp/LOC_A101.csv sqlserver:/var/opt/mssql/data/
+     docker cp Datasets/source_erp/PX_CAT_G1V2.csv sqlserver:/var/opt/mssql/data/
+     ```
+   - Execute `Scripts/03_Bronze_Layer_Data_Load.sql`
 
 ## Design Principles
 

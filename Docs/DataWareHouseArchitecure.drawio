@@ -1,0 +1,66 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.2.1">
+  <diagram id="ArnWfFCJXabqhK2k79vB" name="Page-1">
+    <mxGraphModel dx="1747" dy="1209" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="source-container" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#01579B;fontStyle=1;fontSize=14;startSize=40;rounded=1;" value="Source Systems" vertex="1">
+          <mxGeometry height="400" width="240" x="40" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="erp-system" parent="source-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F57F17;fontSize=12;fontStyle=1;" value="ERP System&#xa;(CSV File)" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="crm-system" parent="source-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F57F17;fontSize=12;fontStyle=1;" value="CRM System&#xa;(CSV File)" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="dw-container" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#4A148C;fontStyle=1;fontSize=14;startSize=40;rounded=1;" value="Modern Data Warehouse – SQL Server" vertex="1">
+          <mxGeometry height="640" width="600" x="360" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="RSmEZsLTg83V0OfpujIX-3" edge="1" parent="dw-container" source="bronze-layer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="silver-layer" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bronze-layer" parent="dw-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D7CCC8;strokeColor=#5D4037;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;" value="&lt;b&gt;Bronze Layer&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Object Type: Tables&lt;br&gt;• Load: Batch Processing, Full Load, Truncate &amp;amp; Insert&lt;br&gt;• Transformations: None (Raw Data, No Transformations)&lt;br&gt;• Data Model: None (As-Is)" vertex="1">
+          <mxGeometry height="140" width="520" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="RSmEZsLTg83V0OfpujIX-2" edge="1" parent="dw-container" source="silver-layer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="gold-layer" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="silver-layer" parent="dw-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CFD8DC;strokeColor=#455A64;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;" value="&lt;b&gt;Silver Layer&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Object Type: Tables&lt;br&gt;• Load: Batch Processing, Full Load, Truncate &amp;amp; Insert&lt;br&gt;• Transformations:&lt;br&gt;  - Data Cleansing&lt;br&gt;  - Data Standardization&lt;br&gt;  - Data Normalization&lt;br&gt;  - Derived Columns&lt;br&gt;  - Data Enrichment&lt;br&gt;• Data Model: None (As-Is)" vertex="1">
+          <mxGeometry height="160" width="520" x="40" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="gold-layer" parent="dw-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F57F17;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;" value="&lt;b&gt;Gold Layer&lt;/b&gt;&lt;br&gt;• Object Type: Views&lt;br&gt;• Load: No Load (Logical Layer Only)&lt;br&gt;• Transformations:&lt;br&gt;  - Data Integration&lt;br&gt;  - Aggregations&lt;br&gt;  - Business Logic&lt;br&gt;• Data Model:&lt;br&gt;  - Star Schema&lt;br&gt;  - Flat Tables&lt;br&gt;  - Aggregated Tables" vertex="1">
+          <mxGeometry height="160" width="520" x="40" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="consumption-container" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#1B5E20;fontStyle=1;fontSize=14;startSize=40;rounded=1;" value="Consumption Layer" vertex="1">
+          <mxGeometry height="400" width="240" x="1040" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="adhoc-analysis" parent="consumption-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=12;fontStyle=1;" value="🔍&#xa;&#xa;Ad-Hoc Analysis" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bi-dashboards" parent="consumption-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=12;fontStyle=1;" value="📊&#xa;&#xa;BI &amp; Dashboards" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ml-models" parent="consumption-container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=12;fontStyle=1;" value="🤖&#xa;&#xa;Machine Learning Models" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="RSmEZsLTg83V0OfpujIX-5" edge="1" parent="1" source="dw-container" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="consumption-container" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="770" />
+              <mxPoint x="1000" y="770" />
+              <mxPoint x="1000" y="400" />
+            </Array>
+            <mxPoint x="730" y="820" as="sourcePoint" />
+            <mxPoint x="1000" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RSmEZsLTg83V0OfpujIX-6" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="280" y="410" as="sourcePoint" />
+            <mxPoint x="360" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
