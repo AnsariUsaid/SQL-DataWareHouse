@@ -28,33 +28,33 @@ USE master;
 GO
 
 -- Create the Data Warehouse database (keeping original name as specified)
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'DataWareHous')
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'DataWarehouse')
 BEGIN
-    CREATE DATABASE DataWareHous;
+    CREATE DATABASE DataWarehouse;
 END
 GO
 
 -- Switch to the newly created database
-USE DataWareHous;
+USE DataWarehouse;
 GO
 
 -- Create Bronze Schema (Raw Data Layer)
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Bronze')
 BEGIN
-    CREATE SCHEMA Bronze;
+    EXEC('CREATE SCHEMA Bronze');
 END
 GO
 
 -- Create Silver Schema (Cleansed & Standardized Data Layer)
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Silver')
 BEGIN
-    CREATE SCHEMA Silver;
+    EXEC('CREATE SCHEMA Silver');
 END
 GO
 
 -- Create Gold Schema (Analytics & Business Logic Layer)  
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Gold')
 BEGIN
-    CREATE SCHEMA Gold;
+    EXEC('CREATE SCHEMA Gold');
 END
 GO
