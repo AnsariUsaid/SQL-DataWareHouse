@@ -15,6 +15,14 @@ TRANSFORMATIONS APPLIED:
 - Clean string data (trim whitespace)
 - Handle NULL values appropriately
 - Add audit columns for data lineage
+- Clean line breaks and carriage returns from text fields
+
+DATA CLEANING NOTES:
+- Some source data columns contain unwanted characters like line feeds (CHAR(10)) 
+  and carriage returns (CHAR(13)) that need to be removed for proper data quality
+- Use pattern: REPLACE(REPLACE(TRIM(column), CHAR(10), ''), CHAR(13), '') 
+- Example: WHEN REPLACE(REPLACE(TRIM(cntry), CHAR(10), ''), CHAR(13), '') = 'DE'
+- This ensures clean comparison and standardization of text values
 
 ================================================================================
 */
@@ -186,9 +194,36 @@ SELECT
         THEN TRY_CAST(CAST(sls_due_dt AS VARCHAR) AS DATE)
         ELSE NULL
     END AS sls_due_dt,
-    ISNULL(sls_sales, 0) AS sls_sales,
-    ISNULL(sls_quantity, 0) AS sls_quantity,
-    ISNULL(sls_price, 0) AS sls_price,
+    --Rules for -ve , NULL or mismatched sales quantity/price 
+    --(these transformations are totally based on the current data quality)
+    --1.if sales is -ve,0,NULL then derive it from quantity * price
+    --2.if price is 0 or null then derive it from sales/quantity
+    --3.if price is -ve make it +ve
+    CASE 
+        WHEN sls_sales IS NULL OR sls_sales <= 0 THEN 
+            CASE 
+                WHEN sls_quantity IS NOT NULL AND sls_price IS NOT NULL THEN sls_quantity * sls_price
+                ELSE 0
+            END
+        ELSE sls_sales
+    END AS sls_sales,
+    CASE 
+        WHEN sls_quantity IS NULL OR sls_quantity < 0 THEN 0
+        ELSE sls_quantity
+    END AS sls_quantity,
+    CASE 
+        WHEN sls_price IS NULL OR sls_price = 0 THEN 
+            CASE 
+                WHEN sls_quantity IS NOT NULL AND sls_quantity <> 0 THEN 
+                    CASE 
+                        WHEN sls_sales IS NOT NULL THEN sls_sales / sls_quantity
+                        ELSE 0
+                    END
+                ELSE 0
+            END
+        WHEN sls_price < 0 THEN ABS(sls_price)
+        ELSE sls_price
+    END AS sls_price,
     GETDATE() AS dwh_date_loaded
 FROM (
     SELECT 
@@ -224,12 +259,16 @@ INSERT INTO Silver.erp_cust_demographics (
     dwh_date_loaded
 )
 SELECT 
-    TRIM(cid) AS cid,
-    bdate,
+    CASE WHEN cid LIKE '%NAS' THEN SUBSTRING(cid,4,LEN(cid))
+        ELSE cid 
+    END AS cid,
+    CASE WHEN bdate>GETDATE() THEN NULL 
+        ELSE bdate 
+    END AS bdate,
     CASE 
-        WHEN UPPER(TRIM(gen)) IN ('MALE', 'M') THEN 'Male'
-        WHEN UPPER(TRIM(gen)) IN ('FEMALE', 'F') THEN 'Female'
-        ELSE 'Unknown'
+        WHEN UPPER(REPLACE(REPLACE(TRIM(gen), CHAR(10), ''), CHAR(13), '')) IN ('MALE', 'M') THEN 'Male'
+        WHEN UPPER(REPLACE(REPLACE(TRIM(gen), CHAR(10), ''), CHAR(13), '')) IN ('FEMALE', 'F') THEN 'Female'
+    ELSE 'Unknown'
     END AS gen,
     GETDATE() AS dwh_date_loaded
 FROM (

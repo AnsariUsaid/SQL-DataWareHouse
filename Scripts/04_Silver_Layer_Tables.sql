@@ -43,22 +43,23 @@ END
 GO
 
 -- Create CRM Product Information table (cleansed and standardized)
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE schema_id = SCHEMA_ID('Silver') AND name = 'crm_prd_info')
-BEGIN
-    CREATE TABLE Silver.crm_prd_info(
-        prd_id INT,
-        prd_key NVARCHAR(50),
-        cat_id NVARCHAR(50), -- Category ID extracted from original prd_key
-        prd_key_clean NVARCHAR(50), -- Cleaned product key after dash
-        prd_nm NVARCHAR(255),
-        prd_cost DECIMAL(10,2),
-        prd_line NVARCHAR(50),
-        prd_line_desc NVARCHAR(50), -- Descriptive product line names
-        prd_start_dt DATE,
-        prd_end_dt DATE, -- End date from original data or calculated via LEAD for duplicates
-        dwh_date_loaded DATETIME2 DEFAULT GETDATE() -- Audit column for data lineage
-    );
-END
+-- Drop existing table if it exists to ensure proper structure
+IF EXISTS (SELECT * FROM sys.tables WHERE schema_id = SCHEMA_ID('Silver') AND name = 'crm_prd_info')
+    DROP TABLE Silver.crm_prd_info;
+
+CREATE TABLE Silver.crm_prd_info(
+    prd_id INT,
+    prd_key NVARCHAR(50),
+    cat_id NVARCHAR(50), -- Category ID extracted from original prd_key
+    prd_key_clean NVARCHAR(50), -- Cleaned product key after dash
+    prd_nm NVARCHAR(255),
+    prd_cost DECIMAL(10,2),
+    prd_line NVARCHAR(50),
+    prd_line_desc NVARCHAR(50), -- Descriptive product line names
+    prd_start_dt DATE,
+    prd_end_dt DATE, -- End date from original data or calculated via LEAD for duplicates
+    dwh_date_loaded DATETIME2 DEFAULT GETDATE() -- Audit column for data lineage
+);
 GO
 
 -- Create CRM Sales Details table (cleansed and standardized)
